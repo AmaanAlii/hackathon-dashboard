@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 // import { hackathons } from "../data/hackathonsMockData";
 import ChallengeCard from "./challengeCard";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function ChallengesSection() {
   //   const currentDate = new Date();
@@ -24,6 +24,9 @@ function ChallengesSection() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedLevel, setSelectedLevel] = useState([]);
+  const [sortOrder, setSortOrder] = useState("Newest First");
+
+  const filterMenuRef = useRef(null);
 
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
 
@@ -47,6 +50,11 @@ function ChallengesSection() {
     }
   };
 
+  const handleSortChange = (order) => {
+    setSortOrder(order);
+  };
+
+  // For filtering and sorting data
   useEffect(() => {
     if (hackathons) {
       const filteredHackathons = hackathons
@@ -77,9 +85,42 @@ function ChallengesSection() {
           return selectedLevel.includes(hackathon.level);
         });
 
+      if (sortOrder === "Newest First") {
+        filteredHackathons.sort(
+          (a, b) => new Date(b.startDate) - new Date(a.startDate)
+        );
+      } else if (sortOrder === "Oldest First") {
+        filteredHackathons.sort(
+          (a, b) => new Date(a.startDate) - new Date(b.startDate)
+        );
+      }
+
       setHackathonsState(filteredHackathons);
     }
-  }, [hackathons, searchTerm, selectedStatus, selectedLevel]);
+  }, [hackathons, searchTerm, selectedStatus, selectedLevel, sortOrder]);
+
+  // For autoclosing filter menu if the user clicks outside the menu
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        filterMenuRef.current &&
+        !filterMenuRef.current.contains(event.target)
+      ) {
+        setFilterMenuOpen(false);
+      }
+    };
+
+    if (filterMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [filterMenuOpen]);
 
   if (hackathonsState === null) {
     return <div>Loading hackathons...</div>;
@@ -107,6 +148,7 @@ function ChallengesSection() {
               Filter <span className="ml-2">&#x25BC;</span>
             </button>
             <div
+              ref={filterMenuRef}
               className={`${
                 filterMenuOpen ? " block" : "hidden"
               } absolute right-0 mt-2 w-[200px] bg-white rounded-lg shadow-lg p-4`}
@@ -142,6 +184,24 @@ function ChallengesSection() {
                     />
                     <label className="ml-2" htmlFor={level}>
                       {level}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <h4 className="text-lg font-semibold mt-4 mb-2">Sort By</h4>
+              <div>
+                {["Newest First", "Oldest First"].map((order) => (
+                  <div key={order}>
+                    <input
+                      type="radio"
+                      id={order}
+                      name="sortOrder"
+                      value={order}
+                      checked={sortOrder === order}
+                      onChange={() => handleSortChange(order)}
+                    />
+                    <label className="ml-2" htmlFor={order}>
+                      {order}
                     </label>
                   </div>
                 ))}
