@@ -31,12 +31,16 @@ export default function EditEventModal({
 
   const handleClose = () => setEditEventModalOpen(false);
 
+  const [isSuccess, setIsSuccess] = React.useState(false);
+
   const handleFormSubmit = (updatedEvent) => {
     // console.log("updatedEvent in editmodal:", updatedEvent);
-
-    dispatch(editHackathon(updatedEvent));
-
-    navigate(internalLinks.home);
+    setIsSuccess(true);
+    setTimeout(() => {
+      dispatch(editHackathon(updatedEvent));
+      navigate(internalLinks.home);
+      setIsSuccess(false);
+    }, 3000);
   };
 
   return (
@@ -48,7 +52,18 @@ export default function EditEventModal({
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <EventForm initialData={initialData} onSubmit={handleFormSubmit} />
+          {isSuccess ? (
+            <div className=" flex flex-col justify-start items-start gap-5">
+              <span className=" text-green-500 font-medium">
+                Hackathon Edited Successfully!
+              </span>
+              <span className=" font-medium">
+                Redirecting you to Homepage...
+              </span>
+            </div>
+          ) : (
+            <EventForm initialData={initialData} onSubmit={handleFormSubmit} />
+          )}
         </Box>
       </Modal>
     </div>
