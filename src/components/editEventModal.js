@@ -32,7 +32,7 @@ export default function EditEventModal({
   const handleClose = () => setEditEventModalOpen(false);
 
   const handleFormSubmit = (updatedEvent) => {
-    console.log("updatedEvent in editmodal:", updatedEvent);
+    // console.log("updatedEvent in editmodal:", updatedEvent);
 
     dispatch(editHackathon(updatedEvent));
 

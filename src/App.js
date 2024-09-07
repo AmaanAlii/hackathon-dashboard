@@ -4,7 +4,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { hackathons } from "./data/hackathonsMockData.js";
-import { loadHackathons } from "./redux/actions.js";
+import { loadHackathons } from "./redux/hackathonsSlice.js";
 
 import Home from "./pages/homePage.js";
 import internalLinks from "./routes/routes.js";
@@ -19,7 +19,6 @@ function App() {
 
   useEffect(() => {
     // Checking if hackathons already exist in localStorage
-
     const storedHackathons = localStorage.getItem("hackathons");
 
     if (!storedHackathons) {

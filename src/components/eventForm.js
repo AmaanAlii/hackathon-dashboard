@@ -11,7 +11,7 @@ const EventForm = ({ initialData = {}, onSubmit }) => {
     level: initialData.level || "Easy",
   });
   const [errors, setErrors] = useState({});
-  console.log("initialData in form:", initialData);
+  //   console.log("initialData in form:", initialData);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];

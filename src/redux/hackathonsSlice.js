@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  hackathons: JSON.parse(localStorage.getItem("hackathons")) || [],
+  hackathons: null,
 };
 
 const hackathonsSlice = createSlice({
@@ -18,7 +18,7 @@ const hackathonsSlice = createSlice({
     },
     editHackathon: (state, action) => {
       const updatedHackathon = action.payload;
-      console.log("state in slices:", state);
+      //   console.log("state in slices:", state);
 
       state.hackathons = state.hackathons.map((h) =>
         h.id === updatedHackathon.id ? updatedHackathon : h

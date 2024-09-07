@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 // import { hackathons } from "../data/hackathonsMockData";
 import ChallengeCard from "./challengeCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function ChallengesSection() {
   //   const currentDate = new Date();
@@ -16,6 +16,8 @@ function ChallengesSection() {
 
   //   console.log(currentDate);
   const hackathons = useSelector((state) => state.hackathons.hackathons);
+
+  const [hackathonsState, setHackathonsState] = useState(null);
 
   //   console.log("hackathons:", hackathons);
 
@@ -45,31 +47,43 @@ function ChallengesSection() {
     }
   };
 
-  const filteredHackathons = hackathons
-    ?.filter((hackathon) => {
-      return hackathon.name.toLowerCase().includes(searchTerm.toLowerCase());
-    })
-    ?.filter((hackathon) => {
-      if (selectedStatus === "All") return true;
-      const currentDate = new Date();
-      const startDate = new Date(hackathon.startDate);
-      const endDate = new Date(hackathon.endDate);
+  useEffect(() => {
+    if (hackathons) {
+      const filteredHackathons = hackathons
+        ?.filter((hackathon) => {
+          return hackathon.name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase());
+        })
+        ?.filter((hackathon) => {
+          if (selectedStatus === "All") return true;
+          const currentDate = new Date();
+          const startDate = new Date(hackathon.startDate);
+          const endDate = new Date(hackathon.endDate);
 
-      if (selectedStatus === "Active") {
-        return currentDate >= startDate && currentDate <= endDate;
-      }
-      if (selectedStatus === "Upcoming") {
-        return currentDate < startDate;
-      }
-      if (selectedStatus === "Past") {
-        return currentDate > endDate;
-      }
-      return true;
-    })
-    ?.filter((hackathon) => {
-      if (selectedLevel.length === 0) return true;
-      return selectedLevel.includes(hackathon.level);
-    });
+          if (selectedStatus === "Active") {
+            return currentDate >= startDate && currentDate <= endDate;
+          }
+          if (selectedStatus === "Upcoming") {
+            return currentDate < startDate;
+          }
+          if (selectedStatus === "Past") {
+            return currentDate > endDate;
+          }
+          return true;
+        })
+        ?.filter((hackathon) => {
+          if (selectedLevel.length === 0) return true;
+          return selectedLevel.includes(hackathon.level);
+        });
+
+      setHackathonsState(filteredHackathons);
+    }
+  }, [hackathons, searchTerm, selectedStatus, selectedLevel]);
+
+  if (hackathonsState === null) {
+    return <div>Loading hackathons...</div>;
+  }
 
   return (
     <section className=" w-full h-auto flex flex-col justify-center items-center ">
@@ -140,7 +154,7 @@ function ChallengesSection() {
         className=" w-full h-auto bg-[#083145] flex justify-center items-center 
       flex-wrap gap-10 py-20"
       >
-        {filteredHackathons?.map((hackathon, index) => (
+        {hackathonsState?.map((hackathon, index) => (
           <ChallengeCard
             key={index}
             img={hackathon?.image}

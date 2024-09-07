@@ -9,7 +9,7 @@ function AddNewEventPage() {
   const navigate = useNavigate();
 
   const handleAddEventFormSubmit = (data) => {
-    console.log("Submitted Data:", data);
+    // console.log("Submitted Data:", data);
     const newEvent = { ...data, id: Date.now() };
 
     dispatch(addHackathon(newEvent));
